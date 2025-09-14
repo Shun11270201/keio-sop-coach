@@ -25,6 +25,7 @@
     "clsx": "^2.1.1",
     "class-variance-authority": "^0.7.0",
     "html2canvas": "^1.4.1",
+    "openai": "^4.56.0",
     "jspdf": "^2.5.1",
     "kuromoji": "^0.1.2",
     "lucide-react": "^0.441.0",

@@ -1,6 +1,5 @@
 {
-  "buildCommand": "npm run build:static",
-  "outputDirectory": "out",
+  "buildCommand": "npm run build",
   "framework": null,
   "installCommand": "npm install",
   "cleanUrls": true

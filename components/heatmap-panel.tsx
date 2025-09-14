@@ -29,6 +29,9 @@ export function HeatmapPanel() {
   const past = useDraftStore(s => s.past)
   const present = useDraftStore(s => s.present)
   const future = useDraftStore(s => s.future)
+  const runGpt = useDraftStore(s => s.runGptAnalysis)
+  const gptLoading = useDraftStore(s => s.gptLoading)
+  const error = useDraftStore(s => s.error)
 
   useEffect(() => {
     // Auto-analyze after small delay
@@ -40,12 +43,16 @@ export function HeatmapPanel() {
     <div className="grid gap-3">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <h3 className="font-semibold flex items-center gap-2"><Flame className="w-4 h-4" />①〜⑥ 選考観点ヒートマップ</h3>
-            <Button size="sm" onClick={run}>再分析</Button>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline" onClick={run}>再分析（ローカル）</Button>
+              <Button size="sm" onClick={runGpt} disabled={gptLoading}>{gptLoading ? 'GPT採点中…' : 'GPT採点'}</Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
+          {error && <div className="text-red-700 text-sm mb-2">{error}</div>}
           <div className="grid grid-cols-1 gap-2">
             {analysis?.rubric.map(r => (
               <div key={r.rubric} className="flex items-center gap-2">

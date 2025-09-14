@@ -11,6 +11,8 @@ type State = {
   analysis: Analysis | null
   highlightRange: { start: number; end: number } | null
   loading: boolean
+  gptLoading: boolean
+  error?: string
 }
 
 type Actions = {
@@ -19,6 +21,7 @@ type Actions = {
   setPresent: (v: string) => void
   setFuture: (v: string) => void
   runAnalysis: () => Promise<void>
+  runGptAnalysis: () => Promise<void>
   setHighlight: (range: { start: number; end: number } | null) => void
   loadFromStorage: () => void
   saveToStorage: () => void
@@ -34,6 +37,7 @@ export const useDraftStore = create<State & Actions>((set, get) => ({
   analysis: null,
   highlightRange: null,
   loading: false,
+  gptLoading: false,
 
   setThesis: (v) => set({ thesis: v }),
   setPast: (v) => set({ past: v }),
@@ -62,5 +66,24 @@ export const useDraftStore = create<State & Actions>((set, get) => ({
     const analysis = await analyzeAll({ thesis, past, present, future })
     set({ analysis, loading: false })
   }
+  ,
+  runGptAnalysis: async () => {
+    const { thesis, past, present, future } = get()
+    set({ gptLoading: true, error: undefined })
+    try {
+      const res = await fetch('/api/gpt-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ thesis, past, present, future })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Failed')
+      // Merge rubric + inconsistencies into existing analysis
+      const current = get().analysis
+      const merged = current ? { ...current, rubric: data.rubric || current.rubric, inconsistencies: data.inconsistencies || current.inconsistencies } : null
+      set({ analysis: merged || current, gptLoading: false })
+    } catch (e: any) {
+      set({ gptLoading: false, error: e?.message || 'GPT 採点に失敗しました' })
+    }
+  }
 }))
-

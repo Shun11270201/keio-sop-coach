@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Export to static HTML so it can be hosted anywhere
-  output: 'export',
+  // Use default serverless output to support API Routes (GPT scoring)
   reactStrictMode: true,
   experimental: {
     optimizePackageImports: ['lucide-react']
