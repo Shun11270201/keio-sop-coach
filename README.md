@@ -30,8 +30,8 @@ keio-sop-coach
 
 5. 静的サイトとしてエクスポート（URL配信しやすい）
 
-   pnpm build:static
-   pnpm serve:out   # http://localhost:8080 で配信（LAN内から IP:8080 でもOK）
+   pnpm build:static   # Next.js 14 では output: export により build だけで out/ が生成されます
+   pnpm serve:out      # http://localhost:8080 で配信（LAN内から IP:8080 でもOK）
 
 6. テスト
 
