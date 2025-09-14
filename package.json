@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "PWA to analyze and coach Keio exchange SOP (Japanese, ~800 chars). Local-only.",
+  "packageManager": "npm@10.8.2",
   "engines": {
     "node": "20.x"
   },
