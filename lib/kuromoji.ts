@@ -1,17 +1,18 @@
 "use client";
-import kuromoji from 'kuromoji'
 
-let tokenizerPromise: Promise<kuromoji.Tokenizer<kuromoji.IpadicFeatures>> | null = null
+let tokenizerPromise: Promise<any> | null = null
 
-export function getTokenizer() {
+export function getTokenizer(): Promise<any> {
   if (!tokenizerPromise) {
-    tokenizerPromise = new Promise((resolve, reject) => {
-      kuromoji.builder({ dicPath: '/kuromoji/dict' }).build((err, tokenizer) => {
-        if (err) return reject(err)
-        resolve(tokenizer)
+    tokenizerPromise = (async () => {
+      const kuromoji: any = await import('kuromoji')
+      return await new Promise((resolve, reject) => {
+        kuromoji.builder({ dicPath: '/kuromoji/dict' }).build((err: any, tokenizer: any) => {
+          if (err) return reject(err)
+          resolve(tokenizer)
+        })
       })
-    })
+    })()
   }
   return tokenizerPromise
 }
-
