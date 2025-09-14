@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { useDraftStore } from '@/store/useDraftStore'
 import type { RubricId } from '@/domain/types'
 import { Flame } from 'lucide-react'
+import { ScoreIndicator } from '@/components/score-indicator'
 
 const RUBRIC_LABEL: Record<RubricId, string> = {
   1: '留学計画',
@@ -57,11 +58,11 @@ export function HeatmapPanel() {
           {error && <div className="text-red-700 text-sm mb-2">{error}</div>}
           <div className="grid grid-cols-1 gap-2">
             {analysis?.rubric.map(r => (
-              <div key={r.rubric} className="flex items-center gap-2">
-                <div className={`w-2 h-6 rounded ${colorForScore(r.score)} mr-2`} />
+              <div key={r.rubric} className="flex items-center gap-3">
+                <ScoreIndicator score={r.score} />
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">{r.rubric}．{RUBRIC_LABEL[r.rubric]}</span>
+                    <span className="text-sm font-medium" title={RUBRIC_LABEL[r.rubric]}>{r.rubric}．{RUBRIC_LABEL[r.rubric]}</span>
                     <Badge variant="secondary">{r.score}/4</Badge>
                   </div>
                   <div className="text-xs text-gray-600 mt-1">根拠: {r.evidences.length} 件</div>
