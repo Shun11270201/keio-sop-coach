@@ -4,7 +4,7 @@
   "private": true,
   "description": "PWA to analyze and coach Keio exchange SOP (Japanese, ~800 chars). Local-only.",
   "engines": {
-    "node": ">=20.0.0"
+    "node": "20.x"
   },
   "scripts": {
     "dev": "next dev -H 0.0.0.0",

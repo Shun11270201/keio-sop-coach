@@ -1,8 +1,7 @@
 {
-  "buildCommand": "pnpm build:static",
+  "buildCommand": "npm run build:static",
   "outputDirectory": "out",
   "framework": null,
-  "installCommand": "pnpm install",
+  "installCommand": "npm install",
   "cleanUrls": true
 }
-
