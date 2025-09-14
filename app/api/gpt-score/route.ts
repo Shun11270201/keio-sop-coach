@@ -15,8 +15,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
   }
 
-  const { thesis, past, present, future } = body as { thesis: string, past: string, present: string, future: string }
-  const full = `${thesis}\n\n【過去】\n${past}\n\n【現在】\n${present}\n\n【未来】\n${future}`.trim()
+  let full: string
+  if (typeof body.body === 'string' && body.body.trim().length > 0) {
+    full = body.body
+  } else {
+    const { thesis, past, present, future } = body as { thesis: string, past: string, present: string, future: string }
+    full = `${thesis}\n\n【過去】\n${past}\n\n【現在】\n${present}\n\n【未来】\n${future}`.trim()
+  }
 
   const client = new OpenAI({ apiKey })
 
@@ -54,4 +59,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: e?.message || 'OpenAI error' }, { status: 500 })
   }
 }
-

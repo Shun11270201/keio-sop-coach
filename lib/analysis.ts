@@ -32,18 +32,18 @@ function scoreFromCount(count: number): 0|1|2|3|4 {
   return 0
 }
 
-export async function analyzeAll(params: {
-  thesis: string,
-  past: string,
-  present: string,
-  future: string,
-}): Promise<Analysis> {
-  const { thesis, past, present, future } = params
-  const body = `${thesis}\n\n【過去】\n${past}\n\n【現在】\n${present}\n\n【未来】\n${future}`.trim()
+type AnalyzeParams =
+  | { thesis: string, past: string, present: string, future: string }
+  | { body: string }
 
-  const charCount = normalizeCount(past + present + future)
-  const sentences = splitSentences(past + present + future)
-  const kanjiR = kanjiRatio(past + present + future)
+export async function analyzeAll(params: AnalyzeParams): Promise<Analysis> {
+  const body = 'body' in params
+    ? params.body
+    : `${params.thesis}\n\n【過去】\n${params.past}\n\n【現在】\n${params.present}\n\n【未来】\n${params.future}`.trim()
+
+  const charCount = normalizeCount(body)
+  const sentences = splitSentences(body)
+  const kanjiR = kanjiRatio(body)
   const politenessMixed = detectPolitenessMixed(body)
   const longSentenceIndices = findLongSentences(sentences)
 
@@ -52,7 +52,7 @@ export async function analyzeAll(params: {
   try {
     const tokenizer = await getTokenizer()
     type SimpleToken = { pos: string; basic_form?: string; surface_form: string }
-    const tokens = tokenizer.tokenize(past + present + future) as unknown as SimpleToken[]
+    const tokens = tokenizer.tokenize(body) as unknown as SimpleToken[]
     const words = tokens
       .filter((t: SimpleToken) => ['名詞', '動詞', '形容詞'].includes(t.pos))
       .map((t: SimpleToken) => (t.basic_form && t.basic_form !== '*' ? t.basic_form : t.surface_form))
@@ -66,10 +66,21 @@ export async function analyzeAll(params: {
   }
 
   // Structure counts
-  const structure = {
-    pastChars: normalizeCount(past),
-    presentChars: normalizeCount(present),
-    futureChars: normalizeCount(future)
+  // Structure: if explicit sections exist, measure; else approximate thirds
+  let structure: { pastChars: number; presentChars: number; futureChars: number }
+  const hasMarkers = body.includes('【過去】') && body.includes('【現在】') && body.includes('【未来】')
+  if (hasMarkers) {
+    const past = body.split('【過去】')[1]?.split('【現在】')[0] || ''
+    const present = body.split('【現在】')[1]?.split('【未来】')[0] || ''
+    const future = body.split('【未来】')[1] || ''
+    structure = {
+      pastChars: normalizeCount(past),
+      presentChars: normalizeCount(present),
+      futureChars: normalizeCount(future)
+    }
+  } else {
+    const len = normalizeCount(body)
+    structure = { pastChars: Math.round(len/3), presentChars: Math.round(len/3), futureChars: len - 2*Math.round(len/3) }
   }
 
   // Rubric scoring and evidences

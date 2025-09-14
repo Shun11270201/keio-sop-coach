@@ -3,8 +3,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HighlightedTextarea } from '@/components/highlighted-textarea'
 import { useDraftStore } from '@/store/useDraftStore'
 import { CountBar } from '@/components/count-bar'
+import { Input } from '@/components/ui/input'
 
 export function EditorPanel() {
+  const mode = useDraftStore(s => s.mode)
+  const setMode = useDraftStore(s => s.setMode)
+  const fullText = useDraftStore(s => s.fullText)
+  const setFullText = useDraftStore(s => s.setFullText)
   const past = useDraftStore(s => s.past)
   const present = useDraftStore(s => s.present)
   const future = useDraftStore(s => s.future)
@@ -39,7 +44,21 @@ export function EditorPanel() {
 
   return (
     <div className="flex flex-col gap-3">
-      <CountBar past={past} present={present} future={future} />
+      {mode === 'single' ? (
+        <CountBar past={''} present={''} future={''} singleText={fullText} />
+      ) : (
+        <CountBar past={past} present={present} future={future} />
+      )}
+      <div className="flex items-center gap-2 text-sm">
+        <label className="font-medium">入力モード:</label>
+        <button className={`h-8 px-3 rounded ${mode==='structured'?'bg-gray-900 text-white':'bg-gray-100'}`} onClick={()=>setMode('structured')}>分割</button>
+        <button className={`h-8 px-3 rounded ${mode==='single'?'bg-gray-900 text-white':'bg-gray-100'}`} onClick={()=>setMode('single')}>一括</button>
+      </div>
+      {mode === 'single' ? (
+        <div>
+          <HighlightedTextarea placeholder="本文をそのまま貼り付け（800字目安）" value={fullText} onChange={e => setFullText(e.target.value)} highlightRange={highlight} />
+        </div>
+      ) : (
       <Tabs defaultValue="past">
         <TabsList>
           <TabsTrigger value="past">過去（目安260）</TabsTrigger>
@@ -56,6 +75,7 @@ export function EditorPanel() {
           <HighlightedTextarea placeholder="未来：留学の活用、帰国後の展望と因果。" value={future} onChange={e => setFuture(e.target.value)} highlightRange={mapRange('future')} />
         </TabsContent>
       </Tabs>
+      )}
     </div>
   )
 }

@@ -4,6 +4,8 @@ import type { Analysis } from '@/domain/types'
 import { analyzeAll } from '@/lib/analysis'
 
 type State = {
+  mode: 'structured' | 'single'
+  fullText: string
   thesis: string
   past: string
   present: string
@@ -17,6 +19,8 @@ type State = {
 
 type Actions = {
   setThesis: (v: string) => void
+  setMode: (v: 'structured' | 'single') => void
+  setFullText: (v: string) => void
   setPast: (v: string) => void
   setPresent: (v: string) => void
   setFuture: (v: string) => void
@@ -30,6 +34,8 @@ type Actions = {
 const STORAGE_KEY = 'keio-sop-coach/draft'
 
 export const useDraftStore = create<State & Actions>((set, get) => ({
+  mode: 'structured',
+  fullText: '',
   thesis: '',
   past: '',
   present: '',
@@ -40,6 +46,8 @@ export const useDraftStore = create<State & Actions>((set, get) => ({
   gptLoading: false,
 
   setThesis: (v) => set({ thesis: v }),
+  setMode: (v) => set({ mode: v }),
+  setFullText: (v) => set({ fullText: v }),
   setPast: (v) => set({ past: v }),
   setPresent: (v) => set({ present: v }),
   setFuture: (v) => set({ future: v }),
@@ -51,30 +59,45 @@ export const useDraftStore = create<State & Actions>((set, get) => ({
       const raw = localStorage.getItem(STORAGE_KEY)
       if (!raw) return
       const data = JSON.parse(raw)
-      set({ thesis: data.thesis || '', past: data.past || '', present: data.present || '', future: data.future || '' })
+      set({
+        mode: data.mode || 'structured',
+        fullText: data.fullText || '',
+        thesis: data.thesis || '',
+        past: data.past || '',
+        present: data.present || '',
+        future: data.future || ''
+      })
     } catch {}
   },
   saveToStorage: () => {
     if (typeof window === 'undefined') return
-    const { thesis, past, present, future } = get()
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ thesis, past, present, future }))
+    const { mode, fullText, thesis, past, present, future } = get()
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ mode, fullText, thesis, past, present, future }))
   },
 
   runAnalysis: async () => {
     set({ loading: true })
-    const { thesis, past, present, future } = get()
-    const analysis = await analyzeAll({ thesis, past, present, future })
+    const { mode, fullText, thesis, past, present, future } = get()
+    const analysis = await analyzeAll(
+      mode === 'single'
+        ? { body: fullText }
+        : { thesis, past, present, future }
+    )
     set({ analysis, loading: false })
   }
   ,
   runGptAnalysis: async () => {
-    const { thesis, past, present, future } = get()
+    const { mode, fullText, thesis, past, present, future } = get()
     set({ gptLoading: true, error: undefined })
     try {
       const res = await fetch('/api/gpt-score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ thesis, past, present, future })
+        body: JSON.stringify(
+          mode === 'single'
+            ? { body: fullText }
+            : { thesis, past, present, future }
+        )
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || 'Failed')
