@@ -51,10 +51,11 @@ export async function analyzeAll(params: {
   let repetitionRate = 0
   try {
     const tokenizer = await getTokenizer()
-    const tokens = tokenizer.tokenize(past + present + future)
+    type SimpleToken = { pos: string; basic_form?: string; surface_form: string }
+    const tokens = tokenizer.tokenize(past + present + future) as unknown as SimpleToken[]
     const words = tokens
-      .filter(t => ['名詞', '動詞', '形容詞'].includes(t.pos))
-      .map(t => (t.basic_form && t.basic_form !== '*' ? t.basic_form : t.surface_form))
+      .filter((t: SimpleToken) => ['名詞', '動詞', '形容詞'].includes(t.pos))
+      .map((t: SimpleToken) => (t.basic_form && t.basic_form !== '*' ? t.basic_form : t.surface_form))
     const total = words.length
     const freq = new Map<string, number>()
     words.forEach(w => freq.set(w, (freq.get(w) || 0) + 1))
@@ -115,4 +116,3 @@ export async function analyzeAll(params: {
     namedEntities
   }
 }
-
