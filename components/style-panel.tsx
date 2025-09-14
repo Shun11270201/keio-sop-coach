@@ -7,10 +7,8 @@ const FILLERS = ['とても', 'かなり', 'やはり', 'やっぱり', 'まず'
 export function StylePanel() {
   const a = useDraftStore(s => s.analysis)
   const thesis = useDraftStore(s => s.thesis)
-  const past = useDraftStore(s => s.past)
-  const present = useDraftStore(s => s.present)
-  const future = useDraftStore(s => s.future)
-  const body = `${thesis}\n${past}${present}${future}`
+  const fullText = useDraftStore(s => s.fullText)
+  const body = `${thesis ? thesis + '\n' : ''}${fullText}`
   const fillers = FILLERS.filter(f => body.includes(f))
 
   return (
@@ -32,4 +30,3 @@ export function StylePanel() {
     </Card>
   )
 }
-
