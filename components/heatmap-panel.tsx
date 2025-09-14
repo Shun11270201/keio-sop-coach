@@ -18,8 +18,14 @@ const RUBRIC_LABEL: Record<RubricId, string> = {
   6: '異文化適応',
 }
 
-function colorForScore(score: 0|1|2|3|4) {
-  return ['bg-gray-100', 'bg-red-200', 'bg-yellow-200', 'bg-green-200', 'bg-green-400'][score]
+function scoreBadgeClass(score: 0|1|2|3|4) {
+  return [
+    'bg-gray-200 text-gray-800',
+    'bg-red-200 text-red-900',
+    'bg-yellow-200 text-yellow-900',
+    'bg-emerald-200 text-emerald-900',
+    'bg-emerald-400 text-emerald-950'
+  ][score]
 }
 
 export function HeatmapPanel() {
@@ -63,7 +69,7 @@ export function HeatmapPanel() {
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium" title={RUBRIC_LABEL[r.rubric]}>{r.rubric}．{RUBRIC_LABEL[r.rubric]}</span>
-                    <Badge variant="secondary">{r.score}/4</Badge>
+                    <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs ${scoreBadgeClass(r.score)}`}>{r.score}/4</span>
                   </div>
                   <div className="text-xs text-gray-600 mt-1">根拠: {r.evidences.length} 件</div>
                 </div>

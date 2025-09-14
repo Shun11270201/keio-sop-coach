@@ -1,8 +1,8 @@
 "use client";
 import { useDraftStore } from '@/store/useDraftStore'
 import { Button } from '@/components/ui/button'
-import { ExportBar } from '@/components/export-bar'
 import { Sparkles } from 'lucide-react'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 export function HeaderBar() {
   const mode = useDraftStore(s => s.mode)
@@ -31,9 +31,9 @@ export function HeaderBar() {
           <Button size="sm" onClick={runGpt} disabled={gptLoading}>{gptLoading ? 'GPT採点中…' : 'GPT採点'}</Button>
           <div className="w-px h-5 bg-gray-200 mx-1" />
           <Button variant="outline" size="sm" onClick={save}>保存</Button>
+          <ThemeToggle />
         </div>
       </div>
     </div>
   )
 }
-
