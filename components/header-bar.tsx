@@ -5,8 +5,6 @@ import { Sparkles } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
 
 export function HeaderBar() {
-  const mode = useDraftStore(s => s.mode)
-  const setMode = useDraftStore(s => s.setMode)
   const run = useDraftStore(s => s.runAnalysis)
   const runGpt = useDraftStore(s => s.runGptAnalysis)
   const gptLoading = useDraftStore(s => s.gptLoading)
@@ -23,10 +21,6 @@ export function HeaderBar() {
           </div>
         </div>
         <div className="hidden md:flex items-center gap-2">
-          <span className="text-sm text-gray-600">入力モード</span>
-          <button className={`h-8 px-3 rounded ${mode==='structured'?'bg-gray-900 text-white':'bg-gray-100'}`} onClick={()=>setMode('structured')}>分割</button>
-          <button className={`h-8 px-3 rounded ${mode==='single'?'bg-gray-900 text-white':'bg-gray-100'}`} onClick={()=>setMode('single')}>一括</button>
-          <div className="w-px h-5 bg-gray-200 mx-1" />
           <Button variant="outline" size="sm" onClick={run}>再分析</Button>
           <Button size="sm" onClick={runGpt} disabled={gptLoading}>{gptLoading ? 'GPT採点中…' : 'GPT採点'}</Button>
           <div className="w-px h-5 bg-gray-200 mx-1" />

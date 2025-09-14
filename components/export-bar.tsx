@@ -6,17 +6,11 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 
 export function ExportBar() {
-  const mode = useDraftStore(s => s.mode)
   const fullText = useDraftStore(s => s.fullText)
   const thesis = useDraftStore(s => s.thesis)
-  const past = useDraftStore(s => s.past)
-  const present = useDraftStore(s => s.present)
-  const future = useDraftStore(s => s.future)
   const save = useDraftStore(s => s.saveToStorage)
 
-  const combined = mode === 'single'
-    ? fullText
-    : `${thesis}\n\n【過去】\n${past}\n\n【現在】\n${present}\n\n【未来】\n${future}`.trim()
+  const combined = `${thesis ? thesis + '\n\n' : ''}${fullText}`.trim()
 
   async function exportTxt() {
     const blob = new Blob([combined], { type: 'text/plain;charset=utf-8' })
@@ -52,28 +46,13 @@ export function ExportBar() {
 }
 
 export function ExportPreview() {
-  const mode = useDraftStore(s => s.mode)
   const fullText = useDraftStore(s => s.fullText)
   const thesis = useDraftStore(s => s.thesis)
-  const past = useDraftStore(s => s.past)
-  const present = useDraftStore(s => s.present)
-  const future = useDraftStore(s => s.future)
   return (
     <div id="exportArea" className="prose-like bg-white text-black p-8 rounded border border-gray-200">
       <h1 className="text-xl font-semibold mb-3">志望動機書（ドラフト）</h1>
-      {mode === 'single' ? (
-        <p className="whitespace-pre-wrap">{fullText}</p>
-      ) : (
-        <>
-          <p className="mb-4">{thesis}</p>
-          <h2 className="font-semibold">【過去】</h2>
-          <p className="mb-3 whitespace-pre-wrap">{past}</p>
-          <h2 className="font-semibold">【現在】</h2>
-          <p className="mb-3 whitespace-pre-wrap">{present}</p>
-          <h2 className="font-semibold">【未来】</h2>
-          <p className="whitespace-pre-wrap">{future}</p>
-        </>
-      )}
+      {thesis && <p className="mb-4">{thesis}</p>}
+      <p className="whitespace-pre-wrap">{fullText}</p>
     </div>
   )
 }

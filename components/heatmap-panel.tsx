@@ -32,12 +32,7 @@ export function HeatmapPanel() {
   const analysis = useDraftStore(s => s.analysis)
   const run = useDraftStore(s => s.runAnalysis)
   const setHighlight = useDraftStore(s => s.setHighlight)
-  const mode = useDraftStore(s => s.mode)
   const fullText = useDraftStore(s => s.fullText)
-  const thesis = useDraftStore(s => s.thesis)
-  const past = useDraftStore(s => s.past)
-  const present = useDraftStore(s => s.present)
-  const future = useDraftStore(s => s.future)
   const runGpt = useDraftStore(s => s.runGptAnalysis)
   const gptLoading = useDraftStore(s => s.gptLoading)
   const error = useDraftStore(s => s.error)
@@ -46,7 +41,7 @@ export function HeatmapPanel() {
     // Auto-analyze after small delay
     const id = setTimeout(() => { run() }, 300)
     return () => clearTimeout(id)
-  }, [mode, fullText, thesis, past, present, future, run])
+  }, [fullText, run])
 
   return (
     <div className="grid gap-3">
