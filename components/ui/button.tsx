@@ -8,13 +8,13 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'default', size = 'md', ...props }, ref) => {
-    const base = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none disabled:opacity-50 disabled:pointer-events-none'
+    const base = 'inline-flex items-center justify-center rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none'
     const variants = {
-      default: 'bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white',
-      outline: 'border border-gray-200 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-gray-800',
-      ghost: 'hover:bg-gray-100 dark:hover:bg-gray-800'
+      default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow',
+      outline: 'border border-border bg-transparent hover:bg-accent hover:text-accent-foreground',
+      ghost: 'hover:bg-accent hover:text-accent-foreground'
     } as const
-    const sizes = { sm: 'h-8 px-3 text-sm', md: 'h-9 px-4', lg: 'h-10 px-6 text-base' } as const
+    const sizes = { sm: 'h-9 px-4 text-sm', md: 'h-10 px-6', lg: 'h-11 px-8 text-base' } as const
     return (
       <button ref={ref} className={clsx(base, variants[variant], sizes[size], className)} {...props} />
     )
